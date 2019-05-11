@@ -7,9 +7,16 @@ const typeDefs = `
     author: String!
   }
 
+  type Author {
+    id: ID!
+    name: String!
+  }
+
   type Query {
     books: [Book!]!
-    book (id: ID!): Book
+    Book (id: ID!): Book
+    authors: [Author!]!
+    Author(id: ID!): Author
    }
 `;
 
@@ -19,31 +26,55 @@ const resolvers = {
             return books;
         },
 
-        book: (parent, args, context, info) => {
+        Book: (parent, args, context, info) => {
             return books.find(b => b.id === args.id)
-        }
+        },
+
+        authors(parent, args, context, info) {
+            return authors;
+        },
+
+        Author: (parent, args, context, info) => {
+            return authors.find(a => a.id === args.id)
+        },
     },
 };
+
+const authors = [
+    {
+        id: "foo-bar",
+        name: "Foo Bar"
+    },
+    {
+        id: "jane-doe",
+        name: "Jane Doe"
+    },
+    {
+        id: "joe-shemoe",
+        name: "Joe Shemoe"
+    }       
+
+];
 
 const books = [
     {
         id: "01",
         title: "GraphQA in Action",
-        author: "Foo Bar"
+        author: "foo-bar"
     },
     {
         id: "02",
         title: "Learning React",
-        author: "Foo Bar"
+        author: "foo-bar"
     },
     {
         id: "03",
         title: "Learning JavaScript",
-        author: "Jane Doe"
+        author: "jane-doe"
     }         
 ]
 
-const context = { books }
+const context = { books, authors }
 
 const server = new ApolloServer({
     typeDefs,
