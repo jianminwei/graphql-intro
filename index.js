@@ -2,42 +2,41 @@ const { ApolloServer, gql } = require('apollo-server')
 
 const typeDefs = `
   type Book {
-    id: ID!
-    title: String!
-    author: String!
+    id: ID
+    title: String
+    author: Author
   }
 
   type Author {
-    id: ID!
-    name: String!
+    id: ID
+    name: String
+    books: [Book]
   }
 
   type Query {
-    books: [Book!]!
-    Book (id: ID!): Book
-    authors: [Author!]!
-    Author(id: ID!): Author
+    author(id: ID!): Author
    }
 `;
 
 const resolvers = {
     Query: {
-        books(parent, args, context, info) {
-            return books;
-        },
-
-        Book: (parent, args, context, info) => {
-            return books.find(b => b.id === args.id)
-        },
-
-        authors(parent, args, context, info) {
-            return authors;
-        },
-
-        Author: (parent, args, context, info) => {
-            return authors.find(a => a.id === args.id)
+        author(parent, args, context, info) {
+            return authors.find(a => a.id = args.id);
         },
     },
+
+    Author: {
+        books(author) {
+            return books.filter(book => book.author === author.id);
+        },
+    },
+
+    Book: {
+        author(book) {
+            let result = authors.filter(a => a.id === book.author);
+            return result[0];
+        },
+    },    
 };
 
 const authors = [
