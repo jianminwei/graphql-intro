@@ -14,26 +14,43 @@ const typeDefs = `
   }
 
   type Query {
+    allAuthors: [Author!]!
     author(id: ID!): Author
+    allBooks: [Book!]!
+    book(id: ID!): Book
    }
 `;
 
 const resolvers = {
     Query: {
+        allAuthors: (parent, args, context, info) => {
+            return authors
+        },
+
         author(parent, args, context, info) {
-            return authors.find(a => a.id = args.id);
+            return authors.find(author => author.id === args.id);
+        },
+
+        allBooks: (parent, args, context, info) => {
+            return books
+        },
+
+        book(parent, args, context, info) {
+            return books.find(book => book.id === args.id);
         },
     },
 
     Author: {
-        books(author) {
-            return books.filter(book => book.author === author.id);
+        books(parent, args, context, info) {
+            return books.filter(book => book.author === parent.id);
         },
     },
 
     Book: {
-        author(book) {
-            let result = authors.filter(a => a.id === book.author);
+        author(parent, args, context, info) {
+            let result = authors.filter(author => author.id === parent.author);
+
+            //here we have to return a individual Author instead of a list.
             return result[0];
         },
     },    
@@ -58,7 +75,7 @@ const authors = [
 const books = [
     {
         id: "01",
-        title: "GraphQA in Action",
+        title: "GraphQL in Action",
         author: "foo-bar"
     },
     {
