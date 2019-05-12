@@ -1,25 +1,12 @@
 const { ApolloServer, gql } = require('apollo-server')
+const fs = require('fs')
+const authors = require("./data/authors")
+const books = require("./data/books")
 
-const typeDefs = `
-  type Book {
-    id: ID
-    title: String
-    author: Author
-  }
+const typeDefs = fs.readFileSync('./typeDefs.graphql', 'UTF-8')
 
-  type Author {
-    id: ID
-    name: String
-    books: [Book]
-  }
-
-  type Query {
-    allAuthors: [Author!]!
-    author(id: ID!): Author
-    allBooks: [Book!]!
-    book(id: ID!): Book
-   }
-`;
+// const resolvers = require('./resolvers')
+// const Query = require("./resolvers/Query");
 
 const resolvers = {
     Query: {
@@ -56,39 +43,6 @@ const resolvers = {
     },    
 };
 
-const authors = [
-    {
-        id: "foo-bar",
-        name: "Foo Bar"
-    },
-    {
-        id: "jane-doe",
-        name: "Jane Doe"
-    },
-    {
-        id: "joe-shemoe",
-        name: "Joe Shemoe"
-    }       
-
-];
-
-const books = [
-    {
-        id: "01",
-        title: "GraphQL in Action",
-        author: "foo-bar"
-    },
-    {
-        id: "02",
-        title: "Learning React",
-        author: "foo-bar"
-    },
-    {
-        id: "03",
-        title: "Learning JavaScript",
-        author: "jane-doe"
-    }         
-]
 
 const context = { books, authors }
 
